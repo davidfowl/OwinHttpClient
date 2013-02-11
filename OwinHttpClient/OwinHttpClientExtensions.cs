@@ -17,8 +17,8 @@ namespace Owin
 
         public static Task<IDictionary<string, object>> Post(this OwinHttpClient client, string url, IDictionary<string, string> postData)
         {
-            return client.Post(url, 
-                               "application/x-www-form-urlencoded; charset=UTF-8", 
+            return client.Post(url,
+                               "application/x-www-form-urlencoded; charset=UTF-8",
                                GetRequestBody(postData));
         }
 
@@ -46,6 +46,7 @@ namespace Owin
         {
             var uri = new Uri(url);
             var request = OwinRequest.Create();
+            request.Protocol = "HTTP/1.1";
             request.Headers = new Dictionary<string, string[]>();
             request.Method = method;
             request.Host = uri.Host;

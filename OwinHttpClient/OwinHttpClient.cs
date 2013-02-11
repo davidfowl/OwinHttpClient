@@ -20,7 +20,7 @@ namespace Owin
             var requestBuilder = new StringBuilder();
 
             // Request line
-            requestBuilder.AppendFormat("{0} {1} HTTP/1.1", request.Method, request.Uri).AppendLine();
+            requestBuilder.AppendFormat("{0} {1} {2}", request.Method, request.Uri, request.Protocol).AppendLine();
 
             // Write headers
             foreach (var header in request.Headers)

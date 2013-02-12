@@ -30,7 +30,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 ";
 
             var client = new OwinHttpClient();
-            var env = client.FromRaw(rawRequest);
+            var env = Request.FromRaw(rawRequest);
 
             await client.Invoke(env);
 
@@ -45,7 +45,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
         private static async Task MakeRequest(int statusCode)
         {
             var client = new OwinHttpClient();
-            var env = client.Get("http://httpbin.org/status/" + statusCode);
+            var env = Request.Get("http://httpbin.org/status/" + statusCode);
             await client.Invoke(env);
 
             Console.WriteLine("========");
@@ -73,11 +73,11 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
             string url = "http://httpbin.org/redirect/" + n;
 
-            IDictionary<string, object> env;
+            var env = Request.Get(url);
 
             while (true)
             {
-                env = client.Get(url);
+                env = Request.Get(url);
 
                 await client.Invoke(env);
                 

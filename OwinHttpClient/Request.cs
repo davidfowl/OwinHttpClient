@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Owin.Types;
 
 namespace Owin
 {
-    public static class OwinHttpClientExtensions
+    public static class Request
     {
-        public static IDictionary<string, object> FromRaw(this OwinHttpClient client, string rawRequest)
+        public static IDictionary<string, object> FromRaw(string rawRequest)
         {
             var request = OwinRequest.Create();
 
@@ -56,7 +54,7 @@ namespace Owin
             return request.Dictionary;
         }
 
-        public static IDictionary<string, object> Get(this OwinHttpClient client, string url)
+        public static IDictionary<string, object> Get(string url)
         {
             if (url == null)
             {
@@ -67,7 +65,7 @@ namespace Owin
             return request.Dictionary;
         }
 
-        public static IDictionary<string, object> Post(this OwinHttpClient client, string url)
+        public static IDictionary<string, object> Post(string url)
         {
             OwinRequest request = CreateRequest(url, "POST");
             return request.Dictionary;

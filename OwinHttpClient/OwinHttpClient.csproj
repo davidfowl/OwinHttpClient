@@ -53,6 +53,8 @@
     <Compile Include="App_Packages\Owin.Types.Sources.0.8.3-alpha\OwinWebSocketReceiveMessage.cs" />
     <Compile Include="ChunkedStream.cs" />
     <Compile Include="ContentLengthStream.cs" />
+    <Compile Include="DefaultStreamFactory.cs" />
+    <Compile Include="IStreamFactory.cs" />
     <Compile Include="OwinEnvironmentExtensions.cs" />
     <Compile Include="OwinHttpClient.cs" />
     <Compile Include="OwinHttpClientConstants.cs" />

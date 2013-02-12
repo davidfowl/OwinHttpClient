@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Owin.Types;
@@ -11,20 +9,28 @@ namespace Owin
 {
     public class OwinHttpClient
     {
+        private readonly IStreamFactory _streamFactory;
+
+        public OwinHttpClient()
+            : this(new DefaultStreamFactory())
+        {
+        }
+
+        public OwinHttpClient(IStreamFactory streamFactory)
+        {
+            _streamFactory = streamFactory;
+        }
+
         public async Task Invoke(IDictionary<string, object> environment)
         {
             var request = new OwinRequest(environment);
             Uri uri = request.Uri;
 
-            Socket socket = await ConnectSocket(uri.Host, uri.Port);
-
-            request.Dictionary[typeof(Socket).FullName] = socket;
-
             var requestBuilder = new StringBuilder();
             request.Dictionary[OwinHttpClientConstants.HttpClientRawRequest] = requestBuilder;
 
             // Request line
-            requestBuilder.AppendFormat("{0} {1} {2}", request.Method, uri, request.Protocol).AppendLine();
+            requestBuilder.AppendFormat("{0} {1} {2}", request.Method, uri.LocalPath, request.Protocol).AppendLine();
 
             // Write headers
             foreach (var header in request.Headers)
@@ -50,102 +56,22 @@ namespace Owin
             if (request.Body != null)
             {
                 // Copy the body to the request
-                await request.Body.CopyToAsync(ms);
+                await request.Body.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
             }
 
-            var tcs = new TaskCompletionSource<object>();
+            // Create a stream for the host and port so we can send the request
+            Stream stream = await _streamFactory.CreateStream(uri.Host, uri.Port).ConfigureAwait(continueOnCapturedContext: false);
 
-            IAsyncResult result = socket.BeginSend(ms.GetBuffer(), 0, (int)ms.Length, SocketFlags.None, ar =>
-            {
-                if (ar.CompletedSynchronously)
-                {
-                    return;
-                }
+            // Write to the stream async
+            await ms.CopyToAsync(stream).ConfigureAwait(continueOnCapturedContext: false);
 
-                CompleteSend(ar, socket, tcs, environment);
-            },
-            null);
-
-            if (result.CompletedSynchronously)
-            {
-                CompleteSend(result, socket, tcs, environment);
-            }
-
-            await tcs.Task;
+            // Populate the response
+            await ReadResponse(stream, environment).ConfigureAwait(continueOnCapturedContext: false);
         }
 
-        private static void CompleteSend(IAsyncResult asyncResult, Socket socket, TaskCompletionSource<object> tcs, IDictionary<string, object> env)
+        private static async Task ReadResponse(Stream stream, IDictionary<string, object> environment)
         {
-            try
-            {
-                SocketError error;
-                socket.EndSend(asyncResult, out error);
-                ReadResponse(socket, env);
-                tcs.TrySetResult(null);
-            }
-            catch (Exception ex)
-            {
-                tcs.TrySetException(ex);
-            }
-        }
-
-        private static async Task<Socket> ConnectSocket(string host, int port)
-        {
-            Socket socket = null;
-
-            IPAddress hostAddress;
-            if (IPAddress.TryParse(host, out hostAddress))
-            {
-                return await Connect(hostAddress, port);
-            }
-
-            IPHostEntry hostEntry = Dns.GetHostEntry(host);
-
-            foreach (IPAddress address in hostEntry.AddressList)
-            {
-                var ipe = new IPEndPoint(address, port);
-                socket = await Connect(address, port);
-
-                if (socket.Connected)
-                {
-                    return socket;
-                }
-            }
-
-            return null;
-        }
-
-        private static Task<Socket> Connect(IPAddress address, int port)
-        {
-            var ipe = new IPEndPoint(address, port);
-            var socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-            var tcs = new TaskCompletionSource<Socket>();
-
-            var sea = new SocketAsyncEventArgs();
-            sea.RemoteEndPoint = ipe;
-            sea.Completed += (sender, e) =>
-            {
-                if (e.SocketError != SocketError.Success)
-                {
-                    tcs.TrySetException(e.ConnectByNameError);
-                }
-                else
-                {
-                    tcs.TrySetResult(socket);
-                }
-            };
-
-
-            bool completedSynchronously = socket.ConnectAsync(sea);
-
-            return tcs.Task;
-        }
-
-        private static void ReadResponse(Socket socket, IDictionary<string, object> env)
-        {
-            var stream = new NetworkStream(socket);
-            var response = new OwinResponse(env);
+            var response = new OwinResponse(environment);
 
             var responseBuilder = new StringBuilder();
             response.Dictionary[OwinHttpClientConstants.HttpClientRawResponse] = responseBuilder;
@@ -158,7 +84,7 @@ namespace Owin
             },
             (key, value) => response.SetHeader(key, value));
 
-            var request = new OwinRequest(env);
+            var request = new OwinRequest(environment);
 
             Stream responseBody = null;
 
@@ -196,11 +122,11 @@ namespace Owin
 
                 if (responseBody == null)
                 {
-                    stream.CopyTo(ms);
+                    await stream.CopyToAsync(ms);
                 }
                 else
                 {
-                    responseBody.CopyTo(ms);
+                    await responseBody.CopyToAsync(ms);
                 }
 
                 ms.Seek(0, SeekOrigin.Begin);

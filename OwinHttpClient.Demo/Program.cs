@@ -13,7 +13,7 @@ namespace Owin
         static void Main(string[] args)
         {
             MakeRequest(200).Wait();
-            FollowRedirects(5).Wait();
+            FollowRedirects(2).Wait();
             MakeRawRequest().Wait();
         }
 
@@ -101,11 +101,10 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
                 await PrintResponse(env);
 
-                var statusCode = (int)env["owin.ResponseStatusCode"];
-                if (statusCode == 302 || statusCode == 301)
+                var response = new OwinResponse(env);
+                if (response.StatusCode == 302 || response.StatusCode == 301)
                 {
-                    var headers = (IDictionary<string, string[]>)env["owin.ResponseHeaders"];
-                    url = headers["Location"][0];
+                    url = response.GetHeader("Location");
                 }
                 else
                 {

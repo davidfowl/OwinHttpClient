@@ -105,7 +105,7 @@ namespace Owin
 
             if (responseBody == null ||
                 (response.Protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) &&
-                "Close".Equals(connection, StringComparison.OrdinalIgnoreCase)))
+                String.Equals(connection, "Close", StringComparison.OrdinalIgnoreCase)))
             {
                 var ms = new MemoryStream();
 

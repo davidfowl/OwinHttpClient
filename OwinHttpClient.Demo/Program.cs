@@ -18,6 +18,16 @@ namespace Owin
             FollowRedirects(2).Wait();
             MakeRawRequest().Wait();
             MakeGzippedRequest().Wait();
+            MakeChunkedRequest().Wait();
+        }
+
+        private static async Task MakeChunkedRequest()
+        {
+            var client = new OwinHttpClient();
+            var env = Request.Get("http://www.google.com/");
+            await client.Invoke(env);
+
+            await PrintResponse(env);
         }
 
         private static async Task MakeHttpsRequest()

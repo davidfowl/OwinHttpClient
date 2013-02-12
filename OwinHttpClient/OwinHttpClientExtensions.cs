@@ -10,6 +10,16 @@ namespace Owin
     {
         public static async Task<IDictionary<string, object>> Get(this OwinHttpClient client, string url)
         {
+            if (client == null)
+            {
+                throw new ArgumentNullException("client");
+            }
+
+            if (url == null)
+            {
+                throw new ArgumentNullException("url");
+            }
+
             OwinRequest request = CreateRequest(url, "GET");
             await client.Invoke(request.Dictionary);
             return request.Dictionary;
@@ -24,19 +34,31 @@ namespace Owin
 
         public static async Task<IDictionary<string, object>> Post(this OwinHttpClient client, string url, string contentType, Stream stream)
         {
+            if (client == null)
+            {
+                throw new ArgumentNullException("client");
+            }
+
+            if (url == null)
+            {
+                throw new ArgumentNullException("url");
+            }
+
+            if (contentType == null)
+            {
+                throw new ArgumentNullException("contentType");
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
             OwinRequest request = CreateRequest(url, "POST");
 
             request.SetHeader("Content-Type", contentType);
             request.Body = stream;
-
-            if (stream != null)
-            {
-                request.SetHeader("Content-Length", stream.Length.ToString());
-            }
-            else
-            {
-                request.SetHeader("Content-Length", "0");
-            }
+            request.SetHeader("Content-Length", stream.Length.ToString());
 
             await client.Invoke(request.Dictionary);
             return request.Dictionary;

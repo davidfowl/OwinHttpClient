@@ -28,10 +28,7 @@ namespace Owin
             // Create a stream for the host and port so we can send the request
             Stream stream = await _streamFactory.CreateStream(uri.Host, uri.Port).ConfigureAwait(continueOnCapturedContext: false);
 
-            var requestWriter = new StreamWriter(stream)
-            {
-                AutoFlush = true
-            };
+            var requestWriter = new StreamWriter(stream);
 
             // Request line
             requestWriter.WriteLine("{0} {1} {2}", request.Method, uri.LocalPath, request.Protocol);
@@ -50,6 +47,9 @@ namespace Owin
                 // End request
                 requestWriter.WriteLine();
             }
+
+            // Flush buffered content to the stream async
+            await requestWriter.FlushAsync().ConfigureAwait(continueOnCapturedContext: true);
 
             if (request.Body != null)
             {
@@ -83,7 +83,7 @@ namespace Owin
                 response.StatusCode == 304 ||
                 request.Method.Equals("HEAD", StringComparison.OrdinalIgnoreCase))
             {
-                responseBody = new ContentLengthStream(stream, 0);
+                responseBody = Stream.Null;
             }
             else
             {
@@ -109,18 +109,12 @@ namespace Owin
             {
                 var ms = new MemoryStream();
 
-                if (responseBody == null)
+                using (stream)
                 {
-                    await stream.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
+                    await (responseBody ?? stream).CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    responseBody = ms;
                 }
-                else
-                {
-                    await responseBody.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
-                }
-
-                ms.Seek(0, SeekOrigin.Begin);
-                responseBody = ms;
-                stream.Close();
             }
 
             response.Body = responseBody;

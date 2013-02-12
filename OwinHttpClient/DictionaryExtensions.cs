@@ -1,13 +1,20 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Owin.Types;
 
 namespace Owin
 {
     public static class DictionaryExtensions
-    {        
+    {
+
+        public static IDictionary<string, object> WithBasicAuthCredentials(this IDictionary<string, object> env, string user, string password)
+        {
+            string value = Convert.ToBase64String(Encoding.ASCII.GetBytes(user + ":" + password));
+            return env.WithHeader("Authorization", "Basic " + value);
+        }
+
         public static IDictionary<string, object> WithContentType(this IDictionary<string, object> env, string value)
         {
             return env.WithHeader("Content-Type", value);

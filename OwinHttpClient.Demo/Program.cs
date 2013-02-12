@@ -12,9 +12,46 @@ namespace Owin
     {
         static void Main(string[] args)
         {
+            MakeBasicAuthRequest().Wait();
             MakeRequest(200).Wait();
             FollowRedirects(2).Wait();
             MakeRawRequest().Wait();
+            MakeGzippedRequest().Wait();
+        }
+
+        private static async Task MakeBasicAuthRequest()
+        {
+            var client = new OwinHttpClient();
+            var env = Request.Get("http://www.httpbin.org/basic-auth/john/doe");
+
+            await client.Invoke(env);
+
+            var response = new OwinResponse(env);
+            if (response.StatusCode != 401)
+            {
+                return;
+            }
+
+            env = Request.Get("http://www.httpbin.org/basic-auth/john/doe")
+                         .WithBasicAuthCredentials("john", "doe");
+
+            await client.Invoke(env);
+
+            await PrintResponse(env);
+        }
+
+        private static async Task MakeGzippedRequest()
+        {            
+            var client = new OwinHttpClient();
+            var env = Request.Get("http://www.httpbin.org/gzip");
+            await client.Invoke(env);
+
+            Console.WriteLine("========");
+            Console.WriteLine("Request");
+            Console.WriteLine("========");
+            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
+
+            await PrintResponse(env);
         }
 
         private static async Task MakeRawRequest()

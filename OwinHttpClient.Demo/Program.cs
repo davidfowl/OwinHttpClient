@@ -11,6 +11,35 @@ namespace Owin
         {
             MakeRequest(200).Wait();
             FollowRedirects(5).Wait();
+            MakeRawRequest().Wait();
+        }
+
+        private static async Task MakeRawRequest()
+        {
+            string rawRequest =
+@"GET http://www.reddit.com/ HTTP/1.1
+Host: www.reddit.com
+Connection: keep-alive
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: en-US,en;q=0.8
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
+
+";
+
+            var client = new OwinHttpClient();
+            var env = client.FromRaw(rawRequest);
+
+            await client.Invoke(env);
+
+            Console.WriteLine("========");
+            Console.WriteLine("Request");
+            Console.WriteLine("========");
+            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
+
+            await PrintResponse(env);
         }
 
         private static async Task MakeRequest(int statusCode)

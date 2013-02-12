@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
+using Owin.Types;
 
 namespace Owin
 {
@@ -63,7 +66,17 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
             Console.WriteLine("========");
             Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawResponse]);
 
-            var reader = new StreamReader((Stream)env["owin.ResponseBody"]);
+            var response = new OwinResponse(env);
+            var encoding = response.GetHeader("Content-Encoding");
+
+            // Handle gzipped streams
+            if (encoding != null &&
+                encoding.Equals("gzip", StringComparison.OrdinalIgnoreCase))
+            {
+                response.Body = new GZipStream(response.Body, CompressionMode.Decompress);
+            }
+
+            var reader = new StreamReader(response.Body);
             Console.WriteLine(await reader.ReadToEndAsync());
         }
 
@@ -80,7 +93,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
                 env = Request.Get(url);
 
                 await client.Invoke(env);
-                
+
                 Console.WriteLine("========");
                 Console.WriteLine("Request");
                 Console.WriteLine("========");
@@ -98,7 +111,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
                 {
                     break;
                 }
-            }            
+            }
         }
     }
 }

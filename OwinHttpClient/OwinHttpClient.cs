@@ -14,13 +14,15 @@ namespace Owin
         public async Task Invoke(IDictionary<string, object> environment)
         {
             var request = new OwinRequest(environment);
-            Socket socket = ConnectSocket(request.Uri.Host, request.Uri.Port);
+            Uri uri = request.Uri;
+
+            Socket socket = await ConnectSocket(uri.Host, uri.Port);
 
             var requestBuilder = new StringBuilder();
             request.Dictionary[OwinHttpClientConstants.HttpClientRawRequest] = requestBuilder;
 
             // Request line
-            requestBuilder.AppendFormat("{0} {1} {2}", request.Method, request.Uri, request.Protocol).AppendLine();
+            requestBuilder.AppendFormat("{0} {1} {2}", request.Method, uri, request.Protocol).AppendLine();
 
             // Write headers
             foreach (var header in request.Headers)
@@ -85,16 +87,22 @@ namespace Owin
             }
         }
 
-        private static Socket ConnectSocket(string host, int port)
+        private static async Task<Socket> ConnectSocket(string host, int port)
         {
+            Socket socket = null;
+
+            IPAddress hostAddress;
+            if (IPAddress.TryParse(host, out hostAddress))
+            {
+                return await Connect(hostAddress, port);
+            }
+
             IPHostEntry hostEntry = Dns.GetHostEntry(host);
 
             foreach (IPAddress address in hostEntry.AddressList)
             {
                 var ipe = new IPEndPoint(address, port);
-                var socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-                socket.Connect(ipe);
+                socket = await Connect(address, port);
 
                 if (socket.Connected)
                 {
@@ -103,6 +111,33 @@ namespace Owin
             }
 
             return null;
+        }
+
+        private static Task<Socket> Connect(IPAddress address, int port)
+        {
+            var ipe = new IPEndPoint(address, port);
+            var socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            var tcs = new TaskCompletionSource<Socket>();
+
+            var sea = new SocketAsyncEventArgs();
+            sea.RemoteEndPoint = ipe;
+            sea.Completed += (sender, e) =>
+            {                
+                if (e.SocketError != SocketError.Success)
+                {
+                    tcs.TrySetException(e.ConnectByNameError);
+                }
+                else
+                {
+                    tcs.TrySetResult(socket);
+                }                
+            };
+
+
+            bool completedSynchronously = socket.ConnectAsync(sea);
+
+            return tcs.Task;
         }
 
         private static void ReadResponse(Socket socket, IDictionary<string, object> env)
@@ -119,7 +154,7 @@ namespace Owin
             responseBuilder.AppendLine(responseLine);
 
             var responseLineReader = new StringReader(responseLine);
-            string protocol = responseLineReader.ReadUntilWhitespace(); 
+            string protocol = responseLineReader.ReadUntilWhitespace();
             responseLineReader.SkipWhitespace();
             response.StatusCode = Int32.Parse(responseLineReader.ReadUntilWhitespace());
             responseLineReader.SkipWhitespace();
@@ -177,7 +212,7 @@ namespace Owin
             string connection = response.GetHeader("Connection");
 
             if (responseBody == null ||
-                (protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) && 
+                (protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) &&
                 "Close".Equals(connection, StringComparison.OrdinalIgnoreCase)))
             {
                 var ms = new MemoryStream();

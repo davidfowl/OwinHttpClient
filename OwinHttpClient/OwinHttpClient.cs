@@ -18,6 +18,8 @@ namespace Owin
 
             Socket socket = await ConnectSocket(uri.Host, uri.Port);
 
+            request.Dictionary[typeof(Socket).FullName] = socket;
+
             var requestBuilder = new StringBuilder();
             request.Dictionary[OwinHttpClientConstants.HttpClientRawRequest] = requestBuilder;
 
@@ -146,8 +148,7 @@ namespace Owin
             var response = new OwinResponse(env);
             var responseBuilder = new StringBuilder();
 
-            response.Headers = new Dictionary<string, string[]>();
-            response.Dictionary[typeof(Socket).FullName] = socket;
+            response.Headers = new Dictionary<string, string[]>();            
             response.Dictionary[OwinHttpClientConstants.HttpClientRawResponse] = responseBuilder;
 
             string responseLine = stream.ReadLine();

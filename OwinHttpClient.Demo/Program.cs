@@ -26,11 +26,6 @@ namespace Owin
             var env = Request.Get("https://www.google.com/");
             await client.Invoke(env);
 
-            Console.WriteLine("========");
-            Console.WriteLine("Request");
-            Console.WriteLine("========");
-            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
-
             await PrintResponse(env);
         }
 
@@ -61,11 +56,6 @@ namespace Owin
             var env = Request.Get("http://www.httpbin.org/gzip");
             await client.Invoke(env);
 
-            Console.WriteLine("========");
-            Console.WriteLine("Request");
-            Console.WriteLine("========");
-            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
-
             await PrintResponse(env);
         }
 
@@ -89,11 +79,6 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
             await client.Invoke(env);
 
-            Console.WriteLine("========");
-            Console.WriteLine("Request");
-            Console.WriteLine("========");
-            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
-
             await PrintResponse(env);
         }
 
@@ -103,21 +88,11 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
             var env = Request.Get("http://httpbin.org/status/" + statusCode);
             await client.Invoke(env);
 
-            Console.WriteLine("========");
-            Console.WriteLine("Request");
-            Console.WriteLine("========");
-            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
-
             await PrintResponse(env);
         }
 
         private static async Task PrintResponse(IDictionary<string, object> env)
         {
-            Console.WriteLine("========");
-            Console.WriteLine("Response");
-            Console.WriteLine("========");
-            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawResponse]);
-
             var response = new OwinResponse(env);
             var encoding = response.GetHeader("Content-Encoding");
 
@@ -145,11 +120,6 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
                 env = Request.Get(url);
 
                 await client.Invoke(env);
-
-                Console.WriteLine("========");
-                Console.WriteLine("Request");
-                Console.WriteLine("========");
-                Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
 
                 await PrintResponse(env);
 

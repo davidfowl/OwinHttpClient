@@ -26,44 +26,37 @@ namespace Owin
             var request = new OwinRequest(environment);
             Uri uri = request.Uri;
 
-            var requestBuilder = new StringBuilder();
-            request.Dictionary[OwinHttpClientConstants.HttpClientRawRequest] = requestBuilder;
+            // Create a stream for the host and port so we can send the request
+            Stream stream = await _streamFactory.CreateStream(uri.Host, uri.Port).ConfigureAwait(continueOnCapturedContext: false);
+
+            var requestWriter = new StreamWriter(stream)
+            {
+                AutoFlush = true
+            };
 
             // Request line
-            requestBuilder.AppendFormat("{0} {1} {2}", request.Method, uri.LocalPath, request.Protocol).AppendLine();
+            requestWriter.WriteLine("{0} {1} {2}", request.Method, uri.LocalPath, request.Protocol);
 
             // Write headers
             foreach (var header in request.Headers)
             {
-                requestBuilder.Append(header.Key)
-                              .Append(": ")
-                              .Append(request.GetHeader(header.Key))
-                              .AppendLine();
+                requestWriter.WriteLine("{0}: {1}", header.Key, request.GetHeader(header.Key));
             }
 
             // End headers
-            requestBuilder.AppendLine();
+            requestWriter.WriteLine();
 
             if (request.Body == null)
             {
                 // End request
-                requestBuilder.AppendLine();
+                requestWriter.WriteLine();
             }
-
-            byte[] requestBuffer = Encoding.UTF8.GetBytes(requestBuilder.ToString());
-            var ms = new MemoryStream(requestBuffer, 0, requestBuffer.Length, writable: true, publiclyVisible: true);
 
             if (request.Body != null)
             {
                 // Copy the body to the request
-                await request.Body.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
+                await request.Body.CopyToAsync(stream).ConfigureAwait(continueOnCapturedContext: false);
             }
-
-            // Create a stream for the host and port so we can send the request
-            Stream stream = await _streamFactory.CreateStream(uri.Host, uri.Port).ConfigureAwait(continueOnCapturedContext: false);
-
-            // Write to the stream async
-            await ms.CopyToAsync(stream).ConfigureAwait(continueOnCapturedContext: false);
 
             // Populate the response
             await ReadResponse(stream, environment).ConfigureAwait(continueOnCapturedContext: false);
@@ -72,9 +65,6 @@ namespace Owin
         private static async Task ReadResponse(Stream stream, IDictionary<string, object> environment)
         {
             var response = new OwinResponse(environment);
-
-            var responseBuilder = new StringBuilder();
-            response.Dictionary[OwinHttpClientConstants.HttpClientRawResponse] = responseBuilder;
 
             HttpParser.ParseResponse(stream, (protocol, statusCode, reasonPhrase) =>
             {
@@ -122,11 +112,11 @@ namespace Owin
 
                 if (responseBody == null)
                 {
-                    await stream.CopyToAsync(ms);
+                    await stream.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
                 }
                 else
                 {
-                    await responseBody.CopyToAsync(ms);
+                    await responseBody.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
                 }
 
                 ms.Seek(0, SeekOrigin.Begin);

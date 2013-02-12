@@ -55,6 +55,7 @@
     <Compile Include="ContentLengthStream.cs" />
     <Compile Include="OwinEnvironmentExtensions.cs" />
     <Compile Include="OwinHttpClient.cs" />
+    <Compile Include="OwinHttpClientConstants.cs" />
     <Compile Include="OwinHttpClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamExtensions.cs" />

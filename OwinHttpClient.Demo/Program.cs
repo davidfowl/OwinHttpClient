@@ -17,7 +17,18 @@ namespace Owin
         private static async Task MakeRequest()
         {
             var client = new OwinHttpClient();
-            var env = await client.Get("http://www.google.com/");
+            var env = await client.Get("http://httpbin.org/status/418");
+
+
+            Console.WriteLine("========");
+            Console.WriteLine("Request");
+            Console.WriteLine("========");
+            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
+
+            Console.WriteLine("========");
+            Console.WriteLine("Response");
+            Console.WriteLine("========");
+            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawResponse]);
 
             var reader = new StreamReader((Stream)env["owin.ResponseBody"]);
             Console.WriteLine(await reader.ReadToEndAsync());

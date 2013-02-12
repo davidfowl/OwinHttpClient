@@ -106,7 +106,7 @@ namespace Owin
         }
 
         private static void ReadResponse(Socket socket, IDictionary<string, object> env)
-        {            
+        {
             var stream = new NetworkStream(socket);
 
             var response = new OwinResponse(env);
@@ -118,7 +118,7 @@ namespace Owin
             requestLineReader.SkipWhitespace();
             response.StatusCode = Int32.Parse(requestLineReader.ReadUntilWhitespace());
             requestLineReader.SkipWhitespace();
-            response.ReasonPhrase = requestLineReader.ReadToEnd();            
+            response.ReasonPhrase = requestLineReader.ReadToEnd();
 
             string headerLine = null;
 
@@ -140,17 +140,30 @@ namespace Owin
                 response.SetHeader(key, value);
             }
 
-            var transferEncoding = response.GetHeader("Transfer-Encoding");
+            var request = new OwinRequest(env);
 
-            if (transferEncoding != null &&
-                transferEncoding.Equals("chunked", StringComparison.OrdinalIgnoreCase))
+            // 100-199, 204, 304 and HEAD requests never have a response body
+            if ((response.StatusCode >= 100 && response.StatusCode <= 199) ||
+                response.StatusCode == 204 ||
+                response.StatusCode == 304 ||
+                request.Method.Equals("HEAD", StringComparison.OrdinalIgnoreCase))
             {
-                response.Body = new ChunkedStream(stream);
+                response.Body = new ContentLengthStream(stream, 0);
             }
             else
             {
-                int contentLength = Int32.Parse(response.GetHeader("Content-Length"));
-                response.Body = new ContentLengthStream(stream, contentLength);
+                var transferEncoding = response.GetHeader("Transfer-Encoding");
+
+                if (transferEncoding != null &&
+                    transferEncoding.Equals("chunked", StringComparison.OrdinalIgnoreCase))
+                {
+                    response.Body = new ChunkedStream(stream);
+                }
+                else
+                {
+                    int contentLength = Int32.Parse(response.GetHeader("Content-Length"));
+                    response.Body = new ContentLengthStream(stream, contentLength);
+                }
             }
         }
     }

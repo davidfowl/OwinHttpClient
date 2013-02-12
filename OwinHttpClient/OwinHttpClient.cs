@@ -125,7 +125,7 @@ namespace Owin
             var sea = new SocketAsyncEventArgs();
             sea.RemoteEndPoint = ipe;
             sea.Completed += (sender, e) =>
-            {                
+            {
                 if (e.SocketError != SocketError.Success)
                 {
                     tcs.TrySetException(e.ConnectByNameError);
@@ -133,7 +133,7 @@ namespace Owin
                 else
                 {
                     tcs.TrySetResult(socket);
-                }                
+                }
             };
 
 
@@ -146,41 +146,17 @@ namespace Owin
         {
             var stream = new NetworkStream(socket);
             var response = new OwinResponse(env);
-            var responseBuilder = new StringBuilder();
 
-            response.Headers = new Dictionary<string, string[]>();            
+            var responseBuilder = new StringBuilder();
             response.Dictionary[OwinHttpClientConstants.HttpClientRawResponse] = responseBuilder;
 
-            string responseLine = stream.ReadLine();
-            responseBuilder.AppendLine(responseLine);
-
-            var responseLineReader = new StringReader(responseLine);
-            string protocol = responseLineReader.ReadUntilWhitespace();
-            responseLineReader.SkipWhitespace();
-            response.StatusCode = Int32.Parse(responseLineReader.ReadUntilWhitespace());
-            responseLineReader.SkipWhitespace();
-            response.ReasonPhrase = responseLineReader.ReadToEnd();
-
-            string headerLine = null;
-
-            while (true)
+            HttpParser.ParseResponse(stream, (protocol, statusCode, reasonPhrase) =>
             {
-                headerLine = stream.ReadLine();
-                responseBuilder.AppendLine(headerLine);
-
-                if (headerLine == String.Empty)
-                {
-                    break;
-                }
-
-                var headerReader = new StringReader(headerLine);
-                string key = headerReader.ReadUntil(c => c == ':');
-                headerReader.Read();
-                headerReader.SkipWhitespace();
-                string value = headerReader.ReadToEnd();
-
-                response.SetHeader(key, value);
-            }
+                response.Protocol = protocol;
+                response.StatusCode = statusCode;
+                response.ReasonPhrase = reasonPhrase;
+            },
+            (key, value) => response.SetHeader(key, value));
 
             var request = new OwinRequest(env);
 
@@ -213,7 +189,7 @@ namespace Owin
             string connection = response.GetHeader("Connection");
 
             if (responseBody == null ||
-                (protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) &&
+                (response.Protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) &&
                 "Close".Equals(connection, StringComparison.OrdinalIgnoreCase)))
             {
                 var ms = new MemoryStream();

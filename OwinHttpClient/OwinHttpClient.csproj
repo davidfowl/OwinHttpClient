@@ -59,6 +59,7 @@
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
+    <Compile Include="HttpParser.cs" />
     <Compile Include="StreamExtensions.cs" />
     <Compile Include="StringReaderExtensions.cs" />
   </ItemGroup>

@@ -12,11 +12,26 @@ namespace Owin
     {
         static void Main(string[] args)
         {
+            // MakeHttpsRequest().Wait();
             MakeBasicAuthRequest().Wait();
             MakeRequest(200).Wait();
             FollowRedirects(2).Wait();
             MakeRawRequest().Wait();
             MakeGzippedRequest().Wait();
+        }
+
+        private static async Task MakeHttpsRequest()
+        {
+            var client = new OwinHttpClient();
+            var env = Request.Get("https://www.google.com/");
+            await client.Invoke(env);
+
+            Console.WriteLine("========");
+            Console.WriteLine("Request");
+            Console.WriteLine("========");
+            Console.WriteLine(env[OwinHttpClientConstants.HttpClientRawRequest]);
+
+            await PrintResponse(env);
         }
 
         private static async Task MakeBasicAuthRequest()

@@ -16,7 +16,8 @@ namespace Owin
         private static async Task MakeRequest(int statusCode)
         {
             var client = new OwinHttpClient();
-            var env = await client.Get("http://httpbin.org/status/" + statusCode);
+            var env = client.Get("http://httpbin.org/status/" + statusCode);
+            await client.Invoke(env);
 
             Console.WriteLine("========");
             Console.WriteLine("Request");
@@ -47,7 +48,9 @@ namespace Owin
 
             while (true)
             {
-                env = await client.Get(url);
+                env = client.Get(url);
+
+                await client.Invoke(env);
                 
                 Console.WriteLine("========");
                 Console.WriteLine("Request");

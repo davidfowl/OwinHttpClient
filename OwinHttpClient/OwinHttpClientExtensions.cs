@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Owin.Types;
 
 namespace Owin
 {
     public static class OwinHttpClientExtensions
     {
-        public static async Task<IDictionary<string, object>> Get(this OwinHttpClient client, string url)
+        public static IDictionary<string, object> Get(this OwinHttpClient client, string url)
         {
             if (client == null)
             {
@@ -21,18 +20,17 @@ namespace Owin
             }
 
             OwinRequest request = CreateRequest(url, "GET");
-            await client.Invoke(request.Dictionary);
             return request.Dictionary;
         }
 
-        public static Task<IDictionary<string, object>> Post(this OwinHttpClient client, string url, IDictionary<string, string> postData)
+        public static IDictionary<string, object> Post(this OwinHttpClient client, string url, IDictionary<string, string> postData)
         {
             return client.Post(url,
                                "application/x-www-form-urlencoded; charset=UTF-8",
                                GetRequestBody(postData));
         }
 
-        public static async Task<IDictionary<string, object>> Post(this OwinHttpClient client, string url, string contentType, Stream stream)
+        public static IDictionary<string, object> Post(this OwinHttpClient client, string url, string contentType, Stream stream)
         {
             if (client == null)
             {
@@ -60,7 +58,6 @@ namespace Owin
             request.Body = stream;
             request.SetHeader("Content-Length", stream.Length.ToString());
 
-            await client.Invoke(request.Dictionary);
             return request.Dictionary;
         }
 

@@ -68,7 +68,7 @@ namespace Owin
             request.Protocol = "HTTP/1.1";
             request.Headers = new Dictionary<string, string[]>();
             request.Method = method;
-            request.Host = uri.Host;
+            request.Host = uri.GetComponents(UriComponents.HostAndPort, UriFormat.Unescaped);
             request.PathBase = String.Empty;
             request.Path = uri.LocalPath;
             request.Scheme = uri.Scheme;

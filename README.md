@@ -17,14 +17,6 @@ var client = new OwinHttpClient();
 await client.Invoke(env);
 
 var response = new OwinResponse(env);
-var encoding = response.GetHeader("Content-Encoding");
-
-// Handle gzipped streams
-if (encoding != null &&
-    encoding.Equals("gzip", StringComparison.OrdinalIgnoreCase))
-{
-    response.Body = new GZipStream(response.Body, CompressionMode.Decompress);
-}
 
 var reader = new StreamReader(response.Body);
 Console.WriteLine(await reader.ReadToEndAsync());

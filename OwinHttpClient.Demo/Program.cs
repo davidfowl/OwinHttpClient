@@ -13,7 +13,6 @@ namespace Owin
     {
         static void Main(string[] args)
         {
-            MakeHttpsRequest().Wait();
             MakeBasicAuthRequest().Wait();
             MakeRequest(200).Wait();
             FollowRedirects(3).Wait();
@@ -63,10 +62,7 @@ namespace Owin
 
         private static async Task MakeGzippedRequest()
         {
-            var client = new OwinHttpClient(app =>
-            {
-                app.Use(typeof(GzipHandler));
-            });
+            var client = new OwinHttpClient();
 
             var env = Request.Get("http://www.httpbin.org/gzip");
             await client.Invoke(env);
@@ -89,10 +85,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
 ";
 
-            var client = new OwinHttpClient(app =>
-            {
-                app.Use(typeof(GzipHandler));
-            });
+            var client = new OwinHttpClient();
 
             var env = Request.FromRaw(rawRequest);
 
@@ -119,10 +112,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
         private static async Task FollowRedirects(int n)
         {
-            var client = new OwinHttpClient(app =>
-            {
-                app.Use(typeof(RedirectHandler), n);
-            });
+            var client = new OwinHttpClient();
 
             string url = "http://httpbin.org/redirect/" + n;
 

@@ -12,7 +12,7 @@ namespace Owin.Middleware
         private readonly AppFunc _next;
         private readonly int _maxRedirects;
 
-        public RedirectHandler(AppFunc next, int maxRedirects = 5)
+        public RedirectHandler(AppFunc next, int maxRedirects)
         {
             _next = next;
             _maxRedirects = maxRedirects;

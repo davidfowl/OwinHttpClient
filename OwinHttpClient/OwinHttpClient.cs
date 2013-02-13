@@ -13,7 +13,7 @@ namespace Owin
         private readonly AppFunc _appFunc;
 
         public OwinHttpClient()
-            : this(app => { })
+            : this(ConfigureDefaultMiddleware)
         {
         }
 
@@ -21,6 +21,7 @@ namespace Owin
         {
             var app = new AppBuilder();
 
+            // REVIEW: Should this be default middlware
             app.Properties["builder.DefaultApp"] = HttpRequestHandler.DefaultAppFunc;
 
             build(app);
@@ -31,6 +32,13 @@ namespace Owin
         public Task Invoke(IDictionary<string, object> environment)
         {
             return _appFunc(environment);
+        }
+
+        public static void ConfigureDefaultMiddleware(IAppBuilder app)
+        {
+            app.Use(typeof(HttpResponseHandler));
+            app.Use(typeof(RedirectHandler), 5);
+            app.Use(typeof(GzipHandler));
         }
     }
 }

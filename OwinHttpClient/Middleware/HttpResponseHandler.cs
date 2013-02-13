@@ -20,6 +20,8 @@ namespace Owin.Middleware
 
         public async Task Invoke(IDictionary<string, object> environment)
         {
+            await _next(environment);
+
             var request = new OwinRequest(environment);
             var response = new OwinResponse(environment);
 

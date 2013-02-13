@@ -2,58 +2,28 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Owin.Infrastructure;
 
 namespace Owin.Http
 {
-    internal class ContentLengthStream : Stream
+    internal class ContentLengthStream : DelegatingStream
     {
         private readonly Stream _stream;
         private readonly long _contentLength;
         private int _consumed;
 
         public ContentLengthStream(Stream stream, long contentLength)
+            : base(stream)
         {
             _stream = stream;
             _contentLength = contentLength;
         }
 
-        public override bool CanRead
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
-
         public override bool CanWrite
         {
-            get { return false; }
-        }
-
-        public override void Flush()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override long Length
-        {
-            get { return _contentLength; }
-        }
-
-        public override long Position
-        {
             get
             {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
+                return false;
             }
         }
 
@@ -87,21 +57,6 @@ namespace Owin.Http
             _consumed += read;
 
             return read;
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetLength(long value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotImplementedException();
         }
     }
 }

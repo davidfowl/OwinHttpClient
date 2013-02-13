@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Owin
+namespace Owin.Middleware
 {
     public class NetworkStreamFactory : IStreamFactory
     {

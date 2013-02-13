@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Owin
+namespace Owin.Middleware
 {
     public interface IStreamFactory
     {

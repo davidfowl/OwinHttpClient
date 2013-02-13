@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Packages\Owin.Builder.Sources.0.8.3-alpha\AppBuilder.cs" />
+    <Compile Include="App_Packages\Owin.Builder.Sources.0.8.3-alpha\GlobalSuppressions.cs" />
+    <Compile Include="App_Packages\Owin.Builder.Sources.0.8.3-alpha\NotFound.cs" />
     <Compile Include="App_Packages\Owin.Types.Sources.0.8.3-alpha\Extensions\OwinRequestExtensions.cs" />
     <Compile Include="App_Packages\Owin.Types.Sources.0.8.3-alpha\Helpers\OwinHelpers.cs" />
     <Compile Include="App_Packages\Owin.Types.Sources.0.8.3-alpha\OwinConstants.cs" />
@@ -53,8 +60,9 @@
     <Compile Include="App_Packages\Owin.Types.Sources.0.8.3-alpha\OwinWebSocketReceiveMessage.cs" />
     <Compile Include="ChunkedStream.cs" />
     <Compile Include="ContentLengthStream.cs" />
-    <Compile Include="NetworkStreamFactory.cs" />
-    <Compile Include="IStreamFactory.cs" />
+    <Compile Include="Middleware\StreamBasedHttpRequest.cs" />
+    <Compile Include="Middleware\NetworkStreamFactory.cs" />
+    <Compile Include="Middleware\IStreamFactory.cs" />
     <Compile Include="OwinEnvironmentExtensions.cs" />
     <Compile Include="OwinHttpClient.cs" />
     <Compile Include="OwinHttpClientConstants.cs" />

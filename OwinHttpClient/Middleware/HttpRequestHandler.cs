@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Owin.Types;
 using Owin.Http;
+using Owin.Types;
 
 namespace Owin.Middleware
 {
@@ -58,14 +58,9 @@ namespace Owin.Middleware
                 await request.Body.CopyToAsync(stream).ConfigureAwait(continueOnCapturedContext: false);
             }
 
-            // Populate the response
-            await ReadResponse(stream, environment).ConfigureAwait(continueOnCapturedContext: false);
-        }
-
-        private static async Task ReadResponse(Stream stream, IDictionary<string, object> environment)
-        {
             var response = new OwinResponse(environment);
 
+            // Parse the response
             HttpParser.ParseResponse(stream, (protocol, statusCode, reasonPhrase) =>
             {
                 response.Protocol = protocol;
@@ -74,51 +69,8 @@ namespace Owin.Middleware
             },
             (key, value) => response.SetHeader(key, value));
 
-            var request = new OwinRequest(environment);
-
-            Stream responseBody = null;
-
-            // 100-199, 204, 304 and HEAD requests never have a response body
-            if ((response.StatusCode >= 100 && response.StatusCode <= 199) ||
-                response.StatusCode == 204 ||
-                response.StatusCode == 304 ||
-                request.Method.Equals("HEAD", StringComparison.OrdinalIgnoreCase))
-            {
-                responseBody = Stream.Null;
-            }
-            else
-            {
-                var transferEncoding = response.GetHeader("Transfer-Encoding");
-
-                if (transferEncoding != null &&
-                    transferEncoding.Equals("chunked", StringComparison.OrdinalIgnoreCase))
-                {
-                    responseBody = new ChunkedStream(stream);
-                }
-                else
-                {
-                    int contentLength = Int32.Parse(response.GetHeader("Content-Length"));
-                    responseBody = new ContentLengthStream(stream, contentLength);
-                }
-            }
-
-            string connection = response.GetHeader("Connection");
-
-            if (responseBody == null ||
-                (response.Protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) &&
-                String.Equals(connection, "Close", StringComparison.OrdinalIgnoreCase)))
-            {
-                var ms = new MemoryStream();
-
-                using (stream)
-                {
-                    await (responseBody ?? stream).CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    responseBody = ms;
-                }
-            }
-
-            response.Body = responseBody;
+            // Set the body to the rest of the stream
+            response.Body = stream;
         }
     }
 }

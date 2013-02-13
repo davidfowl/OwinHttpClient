@@ -61,6 +61,7 @@
     <Compile Include="Http\ChunkedStream.cs" />
     <Compile Include="Http\ContentLengthStream.cs" />
     <Compile Include="Middleware\GzipHandler.cs" />
+    <Compile Include="Middleware\HttpResponseHandler.cs" />
     <Compile Include="Middleware\RedirectHandler.cs" />
     <Compile Include="Middleware\HttpRequestHandler.cs" />
     <Compile Include="Middleware\NetworkStreamFactory.cs" />

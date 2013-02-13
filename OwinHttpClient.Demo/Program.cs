@@ -13,6 +13,7 @@ namespace Owin
     {
         static void Main(string[] args)
         {
+            MakeHttpsRequest().Wait();
             MakeBasicAuthRequest().Wait();
             MakeRequest(204).Wait();
             FollowRedirects(3).Wait();

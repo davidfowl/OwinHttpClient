@@ -26,7 +26,7 @@ namespace Owin.Middleware
             Uri uri = request.Uri;
 
             // Create a stream for the host and port so we can send the request
-            Stream stream = await _streamFactory.CreateStream(uri.Host, uri.Port).ConfigureAwait(continueOnCapturedContext: false);
+            Stream stream = await _streamFactory.CreateStream(uri).ConfigureAwait(continueOnCapturedContext: false);
 
             var requestWriter = new StreamWriter(stream);
 

@@ -14,7 +14,7 @@ namespace Owin
         static void Main(string[] args)
         {
             MakeBasicAuthRequest().Wait();
-            MakeRequest(200).Wait();
+            MakeRequest(204).Wait();
             FollowRedirects(3).Wait();
             MakeRawRequest().Wait();
             MakeGzippedRequest().Wait();

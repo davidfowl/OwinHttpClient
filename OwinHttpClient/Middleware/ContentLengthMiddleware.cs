@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Owin.Http;
 using Owin.Types;
@@ -20,8 +21,14 @@ namespace Owin.Middleware
         public async Task Invoke(IDictionary<string, object> environment)
         {
             await _next(environment);
-
+            
             var response = new OwinResponse(environment);
+            
+            if (response.Body == Stream.Null)
+            {
+                return;
+            }
+
             string contentLengthRaw = response.GetHeader("Content-Length");
             long contentLength;
 

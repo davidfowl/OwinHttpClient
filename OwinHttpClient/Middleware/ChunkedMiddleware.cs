@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Owin.Http;
 using Owin.Types;
@@ -22,6 +23,12 @@ namespace Owin.Middleware
             await _next(environment);
 
             var response = new OwinResponse(environment);
+
+            if (response.Body == Stream.Null)
+            {
+                return;
+            }
+
             var transferEncoding = response.GetHeader("Transfer-Encoding");
 
             if (String.Equals(transferEncoding, 

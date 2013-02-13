@@ -22,6 +22,12 @@ namespace Owin.Middleware
             await _next(environment);
 
             var response = new OwinResponse(environment);
+
+            if (response.Body == Stream.Null)
+            {
+                return;
+            }
+
             string connection = response.GetHeader("Connection");
 
             if (response.Protocol.Equals("HTTP/1.1", StringComparison.OrdinalIgnoreCase) && 

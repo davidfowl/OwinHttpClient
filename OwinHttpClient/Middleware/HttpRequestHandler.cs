@@ -11,13 +11,12 @@ namespace Owin.Middleware
 
     public class HttpRequestHandler
     {
-        // Default middleware for making http requests
-        public static AppFunc DefaultAppFunc = new HttpRequestHandler(new NetworkStreamFactory()).Invoke;
-
         private readonly IStreamFactory _streamFactory;
+        private readonly AppFunc _next;
 
-        public HttpRequestHandler(IStreamFactory streamFactory)
+        public HttpRequestHandler(AppFunc next, IStreamFactory streamFactory)
         {
+            _next = next;
             _streamFactory = streamFactory;
         }
 

@@ -21,9 +21,6 @@ namespace Owin
         {
             var app = new AppBuilder();
 
-            // REVIEW: Should this be default middlware
-            app.Properties["builder.DefaultApp"] = HttpRequestHandler.DefaultAppFunc;
-
             build(app);
 
             _appFunc = (AppFunc)app.Build(typeof(AppFunc));
@@ -36,9 +33,10 @@ namespace Owin
 
         public static void ConfigureDefaultMiddleware(IAppBuilder app)
         {
-            app.Use(typeof(HttpResponseHandler));
-            app.Use(typeof(RedirectHandler), 5);
             app.Use(typeof(GzipHandler));
+            app.Use(typeof(RedirectHandler), 5);
+            app.Use(typeof(HttpResponseHandler));
+            app.Use(typeof(HttpRequestHandler), new NetworkStreamFactory());
         }
     }
 }

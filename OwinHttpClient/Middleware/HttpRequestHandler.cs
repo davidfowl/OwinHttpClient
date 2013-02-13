@@ -9,14 +9,14 @@ namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class StreamBasedHttpRequest
+    public class HttpRequestHandler
     {
         // Default middleware for making http requests
-        public static AppFunc DefaultAppFunc = new StreamBasedHttpRequest(new NetworkStreamFactory()).Invoke;
+        public static AppFunc DefaultAppFunc = new HttpRequestHandler(new NetworkStreamFactory()).Invoke;
 
         private readonly IStreamFactory _streamFactory;
 
-        public StreamBasedHttpRequest(IStreamFactory streamFactory)
+        public HttpRequestHandler(IStreamFactory streamFactory)
         {
             _streamFactory = streamFactory;
         }

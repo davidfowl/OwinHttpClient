@@ -29,6 +29,16 @@ namespace Owin
             return request.Dictionary;
         }
 
+        public static void BuildGet(IDictionary<string, object> environment, string url)
+        {
+            var uri = new Uri(url);
+            var request = OwinRequest.Create(environment);
+            request.Protocol = "HTTP/1.1";
+            request.Method = "GET";
+
+            BuildRequestFromUri(request, uri);
+        }
+
         public static IDictionary<string, object> Get(string url)
         {
             if (url == null)

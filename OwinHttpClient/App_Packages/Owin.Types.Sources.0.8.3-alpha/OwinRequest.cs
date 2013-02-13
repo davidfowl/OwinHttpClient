@@ -33,7 +33,11 @@ namespace Owin.Types
     {
         public static OwinRequest Create()
         {
-            var environment = new ConcurrentDictionary<string, object>(StringComparer.Ordinal);
+            return Create(new ConcurrentDictionary<string, object>(StringComparer.Ordinal));
+        }
+
+        public static OwinRequest Create(IDictionary<string, object> environment)
+        {
             environment[OwinConstants.RequestHeaders] =
                 new ConcurrentDictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
             environment[OwinConstants.ResponseHeaders] =

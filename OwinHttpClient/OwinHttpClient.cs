@@ -21,7 +21,7 @@ namespace Owin
         {
             var app = new AppBuilder();
 
-            app.Properties["builder.DefaultApp"] = StreamBasedHttpRequest.DefaultAppFunc;
+            app.Properties["builder.DefaultApp"] = HttpRequestHandler.DefaultAppFunc;
 
             build(app);
 

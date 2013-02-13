@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using Owin.Middleware;
 using Owin.Types;
 
 namespace Owin
@@ -12,10 +13,10 @@ namespace Owin
     {
         static void Main(string[] args)
         {
-            // MakeHttpsRequest().Wait();
+            MakeHttpsRequest().Wait();
             MakeBasicAuthRequest().Wait();
             MakeRequest(200).Wait();
-            FollowRedirects(2).Wait();
+            FollowRedirects(3).Wait();
             MakeRawRequest().Wait();
             MakeGzippedRequest().Wait();
             MakeChunkedRequest().Wait();
@@ -61,8 +62,12 @@ namespace Owin
         }
 
         private static async Task MakeGzippedRequest()
-        {            
-            var client = new OwinHttpClient();
+        {
+            var client = new OwinHttpClient(app =>
+            {
+                app.Use(typeof(GzipHandler));
+            });
+
             var env = Request.Get("http://www.httpbin.org/gzip");
             await client.Invoke(env);
 
@@ -84,7 +89,11 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
 ";
 
-            var client = new OwinHttpClient();
+            var client = new OwinHttpClient(app =>
+            {
+                app.Use(typeof(GzipHandler));
+            });
+
             var env = Request.FromRaw(rawRequest);
 
             await client.Invoke(env);
@@ -104,45 +113,24 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
         private static async Task PrintResponse(IDictionary<string, object> env)
         {
             var response = new OwinResponse(env);
-            var encoding = response.GetHeader("Content-Encoding");
-
-            // Handle gzipped streams
-            if (encoding != null &&
-                encoding.Equals("gzip", StringComparison.OrdinalIgnoreCase))
-            {
-                response.Body = new GZipStream(response.Body, CompressionMode.Decompress);
-            }
-
             var reader = new StreamReader(response.Body);
             Console.WriteLine(await reader.ReadToEndAsync());
         }
 
         private static async Task FollowRedirects(int n)
         {
-            var client = new OwinHttpClient();
+            var client = new OwinHttpClient(app =>
+            {
+                app.Use(typeof(RedirectHandler), n);
+            });
 
             string url = "http://httpbin.org/redirect/" + n;
 
-            IDictionary<string, object> env;
+            var env = Request.Get(url);
 
-            while (true)
-            {
-                env = Request.Get(url);
+            await client.Invoke(env);
 
-                await client.Invoke(env);
-
-                await PrintResponse(env);
-
-                var response = new OwinResponse(env);
-                if (response.StatusCode == 302 || response.StatusCode == 301)
-                {
-                    url = response.GetHeader("Location");
-                }
-                else
-                {
-                    break;
-                }
-            }
+            await PrintResponse(env);
         }
     }
 }

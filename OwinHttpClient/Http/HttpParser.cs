@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using Owin.Infrastructure;
+using Owin.Client.Infrastructure;
 
-namespace Owin.Http
+namespace Owin.Client.Http
 {
     internal static class HttpParser
     {

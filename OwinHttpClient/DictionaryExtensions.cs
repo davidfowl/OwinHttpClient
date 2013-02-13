@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using Owin.Types;
 
-namespace Owin
+namespace Owin.Client
 {
     public static class DictionaryExtensions
     {

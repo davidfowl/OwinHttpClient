@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinHttpClient", "OwinHttpClient\OwinHttpClient.csproj", "{0E4A9E96-AE2F-4115-A7D5-5162BB849620}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client", "OwinHttpClient\Owin.Client.csproj", "{0E4A9E96-AE2F-4115-A7D5-5162BB849620}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{60323215-8CDE-47B7-B322-F33AEBFC1465}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{603232
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinHttpClient.Demo", "OwinHttpClient.Demo\OwinHttpClient.Demo.csproj", "{F14ABFCD-939C-4199-A544-4DF693D4FA87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client.Demo", "OwinHttpClient.Demo\Owin.Client.Demo.csproj", "{F14ABFCD-939C-4199-A544-4DF693D4FA87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

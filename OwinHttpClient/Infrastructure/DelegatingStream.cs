@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Owin.Infrastructure
+namespace Owin.Client.Infrastructure
 {
     public abstract class DelegatingStream : Stream
     {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Owin.Http;
+using Owin.Client.Http;
 using Owin.Types;
 
-namespace Owin.Middleware
+namespace Owin.Client.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 

@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Owin.Infrastructure;
+using Owin.Client.Infrastructure;
 
-namespace Owin.Http
+namespace Owin.Client.Http
 {
     internal class ContentLengthStream : DelegatingStream
     {

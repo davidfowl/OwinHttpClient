@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Threading.Tasks;
-using Owin.Middleware;
+using Owin.Client;
 using Owin.Types;
 
 namespace Owin

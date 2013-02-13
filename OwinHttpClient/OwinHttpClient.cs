@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Owin.Builder;
-using Owin.Middleware;
+using Owin.Client.Middleware;
 
-namespace Owin
+namespace Owin.Client
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 

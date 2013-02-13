@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Owin.Infrastructure
+namespace Owin.Client.Infrastructure
 {
     internal static class StringReaderExtensions
     {

@@ -8,10 +8,10 @@ namespace Owin.Http
     internal class ContentLengthStream : Stream
     {
         private readonly Stream _stream;
-        private readonly int _contentLength;
+        private readonly long _contentLength;
         private int _consumed;
 
-        public ContentLengthStream(Stream stream, int contentLength)
+        public ContentLengthStream(Stream stream, long contentLength)
         {
             _stream = stream;
             _contentLength = contentLength;
@@ -64,7 +64,7 @@ namespace Owin.Http
                 return 0;
             }
 
-            int maxRead = Math.Min(count, _contentLength - _consumed);
+            var maxRead = (int)Math.Min(count, _contentLength - _consumed);
 
             int read = await _stream.ReadAsync(buffer, offset, maxRead, cancellationToken);
 
@@ -80,7 +80,7 @@ namespace Owin.Http
                 return 0;
             }
 
-            int maxRead = Math.Min(count, _contentLength - _consumed);
+            var maxRead = (int)Math.Min(count, _contentLength - _consumed);
 
             int read = _stream.Read(buffer, offset, maxRead);
 

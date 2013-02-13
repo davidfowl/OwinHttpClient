@@ -60,8 +60,11 @@
     <Compile Include="App_Packages\Owin.Types.Sources.0.8.3-alpha\OwinWebSocketReceiveMessage.cs" />
     <Compile Include="Http\ChunkedStream.cs" />
     <Compile Include="Http\ContentLengthStream.cs" />
+    <Compile Include="Middleware\ChunkedHandler.cs" />
+    <Compile Include="Middleware\ConnectionCloseHandler.cs" />
+    <Compile Include="Middleware\ContentLengthHandler.cs" />
     <Compile Include="Middleware\GzipHandler.cs" />
-    <Compile Include="Middleware\HttpResponseHandler.cs" />
+    <Compile Include="Middleware\NoBodyHandler.cs" />
     <Compile Include="Middleware\RedirectHandler.cs" />
     <Compile Include="Middleware\HttpRequestHandler.cs" />
     <Compile Include="Middleware\NetworkStreamFactory.cs" />

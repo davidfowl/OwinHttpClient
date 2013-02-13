@@ -11,7 +11,7 @@ namespace Owin
         private readonly IStreamFactory _streamFactory;
 
         public OwinHttpClient()
-            : this(new DefaultStreamFactory())
+            : this(new NetworkStreamFactory())
         {
         }
 

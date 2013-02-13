@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Owin
 {
-    public class DefaultStreamFactory : IStreamFactory
+    public class NetworkStreamFactory : IStreamFactory
     {
         public async Task<Stream> CreateStream(string host, int port)
         {

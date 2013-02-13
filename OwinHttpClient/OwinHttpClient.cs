@@ -34,13 +34,13 @@ namespace Owin
         public static void ConfigureDefaultMiddleware(IAppBuilder app)
         {
             // The order matters!
-            app.Use(typeof(GzipHandler));
-            app.Use(typeof(RedirectHandler), 5);
-            app.Use(typeof(ConnectionCloseHandler));
-            app.Use(typeof(ContentLengthHandler));
-            app.Use(typeof(ChunkedHandler));
-            app.Use(typeof(NoBodyHandler));
-            app.Use(typeof(HttpRequestHandler), new NetworkStreamFactory());
+            app.Use(typeof(GzipMiddleware));
+            app.Use(typeof(RedirectMiddleware), 5);
+            app.Use(typeof(ConnectionCloseMiddleware));
+            app.Use(typeof(ContentLengthMiddleware));
+            app.Use(typeof(ChunkedMiddleware));
+            app.Use(typeof(NoBodyMiddleware));
+            app.Use(typeof(HttpRequestMiddleware), new NetworkStreamFactory());
         }
     }
 }

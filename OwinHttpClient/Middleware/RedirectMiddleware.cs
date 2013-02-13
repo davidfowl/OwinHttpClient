@@ -7,12 +7,12 @@ namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class RedirectHandler
+    public class RedirectMiddleware
     {
         private readonly AppFunc _next;
         private readonly int _maxRedirects;
 
-        public RedirectHandler(AppFunc next, int maxRedirects)
+        public RedirectMiddleware(AppFunc next, int maxRedirects)
         {
             _next = next;
             _maxRedirects = maxRedirects;

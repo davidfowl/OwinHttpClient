@@ -8,11 +8,11 @@ namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class ChunkedHandler
+    public class ContentLengthMiddleware
     {
         private readonly AppFunc _next;
 
-        public ChunkedHandler(AppFunc next)
+        public ContentLengthMiddleware(AppFunc next)
         {
             _next = next;
         }
@@ -22,13 +22,13 @@ namespace Owin.Middleware
             await _next(environment);
 
             var response = new OwinResponse(environment);
-            var transferEncoding = response.GetHeader("Transfer-Encoding");
+            string contentLengthRaw = response.GetHeader("Content-Length");
+            long contentLength;
 
-            if (String.Equals(transferEncoding, 
-                              "chunked", 
-                              StringComparison.OrdinalIgnoreCase))
+            if (contentLengthRaw != null && 
+                Int64.TryParse(contentLengthRaw, out contentLength))
             {
-                response.Body = new ChunkedStream(response.Body);
+                response.Body = new ContentLengthStream(response.Body, contentLength);
             }
         }
     }

@@ -8,11 +8,11 @@ namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class NoBodyHandler
+    public class NoBodyMiddleware
     {
         private readonly AppFunc _next;
 
-        public NoBodyHandler(AppFunc next)
+        public NoBodyMiddleware(AppFunc next)
         {
             _next = next;
         }

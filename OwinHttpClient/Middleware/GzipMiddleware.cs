@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Threading.Tasks;
-using Owin.Http;
 using Owin.Types;
 
 namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class ContentLengthHandler
+    public class GzipMiddleware
     {
         private readonly AppFunc _next;
 
-        public ContentLengthHandler(AppFunc next)
+        public GzipMiddleware(AppFunc next)
         {
             _next = next;
         }
@@ -22,13 +22,11 @@ namespace Owin.Middleware
             await _next(environment);
 
             var response = new OwinResponse(environment);
-            string contentLengthRaw = response.GetHeader("Content-Length");
-            long contentLength;
+            var encoding = response.GetHeader("Content-Encoding");
 
-            if (contentLengthRaw != null && 
-                Int64.TryParse(contentLengthRaw, out contentLength))
+            if (String.Equals(encoding, "gzip", StringComparison.OrdinalIgnoreCase))
             {
-                response.Body = new ContentLengthStream(response.Body, contentLength);
+                response.Body = new GZipStream(response.Body, CompressionMode.Decompress);
             }
         }
     }

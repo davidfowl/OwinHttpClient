@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Threading.Tasks;
+using Owin.Http;
 using Owin.Types;
 
 namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class GzipHandler
+    public class ChunkedMiddleware
     {
         private readonly AppFunc _next;
 
-        public GzipHandler(AppFunc next)
+        public ChunkedMiddleware(AppFunc next)
         {
             _next = next;
         }
@@ -22,11 +22,13 @@ namespace Owin.Middleware
             await _next(environment);
 
             var response = new OwinResponse(environment);
-            var encoding = response.GetHeader("Content-Encoding");
+            var transferEncoding = response.GetHeader("Transfer-Encoding");
 
-            if (String.Equals(encoding, "gzip", StringComparison.OrdinalIgnoreCase))
+            if (String.Equals(transferEncoding, 
+                              "chunked", 
+                              StringComparison.OrdinalIgnoreCase))
             {
-                response.Body = new GZipStream(response.Body, CompressionMode.Decompress);
+                response.Body = new ChunkedStream(response.Body);
             }
         }
     }

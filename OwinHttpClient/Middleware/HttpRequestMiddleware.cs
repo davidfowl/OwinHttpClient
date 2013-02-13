@@ -9,12 +9,12 @@ namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class HttpRequestHandler
+    public class HttpRequestMiddleware
     {
         private readonly AppFunc _next;
         private readonly IStreamFactory _streamFactory;
 
-        public HttpRequestHandler(AppFunc next, IStreamFactory streamFactory)
+        public HttpRequestMiddleware(AppFunc next, IStreamFactory streamFactory)
         {
             _next = next;
             _streamFactory = streamFactory;

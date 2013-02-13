@@ -8,11 +8,11 @@ namespace Owin.Middleware
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class ConnectionCloseHandler
+    public class ConnectionCloseMiddleware
     {
         private readonly AppFunc _next;
 
-        public ConnectionCloseHandler(AppFunc next)
+        public ConnectionCloseMiddleware(AppFunc next)
         {
             _next = next;
         }

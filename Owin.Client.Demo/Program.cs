@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Owin.Client;
 using Owin.Types;
+using Owin;
 
 namespace OwinDemo
 {
@@ -11,13 +12,50 @@ namespace OwinDemo
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Make SignalR request in memory");
+            MakeSignalRRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make https request");
             MakeHttpsRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make authenticated request");
             MakeBasicAuthRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make 204 request");
             MakeRequest(204).Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Following 3 redirects");
             FollowRedirects(3).Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make request from raw request body");
             MakeRawRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make request to gzipped resource");
             MakeGzippedRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make chunked request");
             MakeChunkedRequest().Wait();
+        }
+
+        private static async Task MakeSignalRRequest()
+        {
+            var client = new OwinHttpClient(app =>
+            {
+                app.MapHubs();
+            });
+
+            var env = Request.Get("http://foo/signalr/hubs");
+
+            await client.Invoke(env);
+
+            await PrintResponse(env);
         }
 
         private static async Task MakeChunkedRequest()

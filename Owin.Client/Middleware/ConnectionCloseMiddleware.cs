@@ -39,7 +39,6 @@ namespace Owin.Client.Middleware
                 {
                     await response.Body.CopyToAsync(ms).ConfigureAwait(continueOnCapturedContext: false);
                 }
-
                 ms.Seek(0, SeekOrigin.Begin);
                 response.Body = ms;
             }

@@ -63,6 +63,10 @@ namespace Owin.Client
             request.Protocol = "HTTP/1.1";
             request.Method = method;
 
+            // Setup a empty stream by default
+            var response = new OwinResponse(request);
+            response.Body = new MemoryStream();
+
             BuildRequestFromUri(request, uri);
             return request;
         }

@@ -1,7 +1,14 @@
 # OwinHttpClient
 
 A bare bones, low ceremony, http client. There's a single method, Invoke that takes an owin environment
-that gets mutated with the response when the call to invoke is completed. It's fulling async using the socket API (no wininet/winhttp).
+that gets mutated with the response when the call to invoke is completed.
+
+### Middleware 
+
+The client takes advantage of Owin middleware to build up functionality. This of course is completely optional but the list of default
+middleware supports making http requests via sockets, ssl support, gzipped responses, handling automatic redirects and more...
+
+See the list of middlware [here](https://github.com/davidfowl/OwinHttpClient/tree/master/OwinHttpClient/Middleware)
 
 **NOTE: The api is still in flux and it will be until it feels right.**
 

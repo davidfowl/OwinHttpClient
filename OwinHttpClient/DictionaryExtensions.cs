@@ -36,12 +36,29 @@ namespace Owin
             return request.Dictionary;
         }
 
+        public static IDictionary<string, object> WithFormUrlEncodedContent(this IDictionary<string, object> env, object postData)
+        {
+            return env.WithFormUrlEncodedContent(GetDictionary(postData));
+        }
+
         public static IDictionary<string, object> WithFormUrlEncodedContent(this IDictionary<string, object> env, IDictionary<string, string> postData)
         {
             return env.WithContentType("application/x-www-form-urlencoded; charset=UTF-8")
                       .WithBody(GetRequestBody(postData));
         }
-        
+
+        private static IDictionary<string, string> GetDictionary(object postData)
+        {
+            var properties = new Dictionary<string, string>();
+            foreach (var property in postData.GetType().GetProperties())
+            {
+                object value = property.GetValue(postData);
+                properties[property.Name] = value == null ? value.ToString() : null;
+            }
+
+            return properties;
+        }
+
         private static Stream GetRequestBody(IDictionary<string, string> postData)
         {
             var ms = new MemoryStream();

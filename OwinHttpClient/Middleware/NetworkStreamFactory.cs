@@ -3,12 +3,16 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace Owin.Middleware
 {
     public class NetworkStreamFactory : IStreamFactory
     {
+        private static readonly SslProtocols _sslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+
         public async Task<Stream> CreateStream(Uri uri)
         {
             Socket socket = null;
@@ -45,8 +49,8 @@ namespace Owin.Middleware
 
             if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
             {
-                var sslStream = new SslStream(stream, leaveInnerStreamOpen: true);
-                await sslStream.AuthenticateAsClientAsync(uri.Host);
+                var sslStream = new SslStream(stream);
+                await sslStream.AuthenticateAsClientAsync(uri.Host, new X509CertificateCollection(), _sslProtocols, checkCertificateRevocation: false);
                 stream = sslStream;
             }
 

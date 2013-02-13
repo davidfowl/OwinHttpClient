@@ -11,8 +11,8 @@ namespace Owin.Middleware
 
     public class HttpRequestHandler
     {
-        private readonly IStreamFactory _streamFactory;
         private readonly AppFunc _next;
+        private readonly IStreamFactory _streamFactory;
 
         public HttpRequestHandler(AppFunc next, IStreamFactory streamFactory)
         {

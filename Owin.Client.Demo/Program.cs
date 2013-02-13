@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Owin.Client;
 using Owin.Types;
 
-namespace Owin
+namespace OwinDemo
 {
     class Program
     {

@@ -5,7 +5,7 @@ using System.Text;
 using Owin.Client.Http;
 using Owin.Types;
 
-namespace Owin
+namespace Owin.Client
 {
     public static class Request
     {

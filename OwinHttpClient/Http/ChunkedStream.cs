@@ -1,20 +1,21 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Owin.Infrastructure;
 
-namespace Owin
+namespace Owin.Http
 {
-    internal class ContentLengthStream : Stream
+    internal class ChunkedStream : Stream
     {
         private readonly Stream _stream;
-        private readonly int _contentLength;
         private int _consumed;
+        private int? _chunkLength;
 
-        public ContentLengthStream(Stream stream, int contentLength)
+        public ChunkedStream(Stream networkStream)
         {
-            _stream = stream;
-            _contentLength = contentLength;
+            _stream = networkStream;
         }
 
         public override bool CanRead
@@ -42,7 +43,7 @@ namespace Owin
 
         public override long Length
         {
-            get { return _contentLength; }
+            get { throw new NotImplementedException(); }
         }
 
         public override long Position
@@ -59,32 +60,68 @@ namespace Owin
 
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            if (_consumed >= _contentLength)
+            if (_chunkLength == null)
             {
-                return 0;
+                string rawLength = _stream.ReadLine();
+
+                int length = Int32.Parse(rawLength, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+                if (length == 0)
+                {
+                    return await Task.FromResult<int>(0);
+                }
+
+                _chunkLength = length;
             }
 
-            int maxRead = Math.Min(count, _contentLength - _consumed);
+            int maxRead = Math.Min(count - offset, _chunkLength.Value - _consumed);
 
             int read = await _stream.ReadAsync(buffer, offset, maxRead, cancellationToken);
 
             _consumed += read;
+
+            if (_consumed >= _chunkLength)
+            {
+                _stream.ReadLine();
+
+                _chunkLength = null;
+
+                _consumed = 0;
+            }
 
             return read;
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_consumed >= _contentLength)
+            if (_chunkLength == null)
             {
-                return 0;
+                string rawLength = _stream.ReadLine();
+
+                int length = Int32.Parse(rawLength, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+                if (length == 0)
+                {
+                    return 0;
+                }
+
+                _chunkLength = length;
             }
 
-            int maxRead = Math.Min(count, _contentLength - _consumed);
+            int maxRead = Math.Min(count - offset, _chunkLength.Value - _consumed);
 
             int read = _stream.Read(buffer, offset, maxRead);
 
             _consumed += read;
+
+            if (_consumed >= _chunkLength)
+            {
+                _stream.ReadLine();
+
+                _chunkLength = null;
+
+                _consumed = 0;
+            }
 
             return read;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Owin.Http;
 using Owin.Types;
 
 namespace Owin

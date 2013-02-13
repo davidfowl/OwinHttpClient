@@ -8,7 +8,6 @@ namespace Owin
 {
     public static class DictionaryExtensions
     {
-
         public static IDictionary<string, object> WithBasicAuthCredentials(this IDictionary<string, object> env, string user, string password)
         {
             string value = Convert.ToBase64String(Encoding.ASCII.GetBytes(user + ":" + password));

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Owin
+namespace Owin.Infrastructure
 {
     internal static class StreamExtensions
     {

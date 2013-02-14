@@ -7,7 +7,7 @@ using Owin.Types;
 
 namespace Owin.Client
 {
-    public static class Request
+    public static class RequestBuilder
     {
         public static IDictionary<string, object> FromRaw(string raw)
         {

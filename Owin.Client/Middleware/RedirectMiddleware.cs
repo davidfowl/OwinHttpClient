@@ -36,7 +36,7 @@ namespace Owin.Client.Middleware
                     environment.Clear();
 
                     // Populate the env with new request data
-                    Request.BuildGet(environment, url);
+                    RequestBuilder.BuildGet(environment, url);
                 }
                 else
                 {

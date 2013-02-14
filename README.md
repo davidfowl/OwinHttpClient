@@ -17,7 +17,7 @@ See the list of middlware [here](https://github.com/davidfowl/OwinHttpClient/tre
 The sample uses Owin.Types from http://www.myget.org/F/owin/ for OwinResponse.
 
 ```csharp
-var env = Request.Get("http://www.reddit.com");
+var env = RequestBuilder.Get("http://www.reddit.com");
 
 var client = new OwinHttpClient();
 

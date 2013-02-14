@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Owin.Client;
 using Owin.Types;
 using Owin;
+using Nancy;
 
 namespace OwinDemo
 {
@@ -14,6 +15,10 @@ namespace OwinDemo
         {
             Console.WriteLine("Make SignalR request in memory");
             MakeSignalRRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make Nancy request in memory");
+            MakeNancyRequest().Wait();
             Console.ReadKey();
 
             Console.WriteLine("Make https request");
@@ -44,6 +49,20 @@ namespace OwinDemo
             MakeChunkedRequest().Wait();
         }
 
+        private static async Task MakeNancyRequest()
+        {
+            var client = new OwinHttpClient(app =>
+            {
+                app.UseNancy();
+            });
+
+            var nancyEnv = RequestBuilder.Get("http://foo/hello");
+
+            await client.Invoke(nancyEnv);
+
+            await PrintResponse(nancyEnv);
+        }
+
         private static async Task MakeSignalRRequest()
         {
             var client = new OwinHttpClient(app =>
@@ -51,7 +70,7 @@ namespace OwinDemo
                 app.MapHubs();
             });
 
-            var env = Request.Get("http://foo/signalr/hubs");
+            var env = RequestBuilder.Get("http://foo/signalr/hubs");
 
             await client.Invoke(env);
 
@@ -61,7 +80,7 @@ namespace OwinDemo
         private static async Task MakeChunkedRequest()
         {
             var client = new OwinHttpClient();
-            var env = Request.Get("http://www.google.com/");
+            var env = RequestBuilder.Get("http://www.google.com/");
             await client.Invoke(env);
 
             await PrintResponse(env);
@@ -70,7 +89,7 @@ namespace OwinDemo
         private static async Task MakeHttpsRequest()
         {
             var client = new OwinHttpClient();
-            var env = Request.Get("https://www.google.com/");
+            var env = RequestBuilder.Get("https://www.google.com/");
             await client.Invoke(env);
 
             await PrintResponse(env);
@@ -79,7 +98,7 @@ namespace OwinDemo
         private static async Task MakeBasicAuthRequest()
         {
             var client = new OwinHttpClient();
-            var env = Request.Get("http://www.httpbin.org/basic-auth/john/doe");
+            var env = RequestBuilder.Get("http://www.httpbin.org/basic-auth/john/doe");
 
             await client.Invoke(env);
 
@@ -89,7 +108,7 @@ namespace OwinDemo
                 return;
             }
 
-            env = Request.Get("http://www.httpbin.org/basic-auth/john/doe")
+            env = RequestBuilder.Get("http://www.httpbin.org/basic-auth/john/doe")
                          .WithBasicAuthCredentials("john", "doe");
 
             await client.Invoke(env);
@@ -101,7 +120,7 @@ namespace OwinDemo
         {
             var client = new OwinHttpClient();
 
-            var env = Request.Get("http://www.httpbin.org/gzip");
+            var env = RequestBuilder.Get("http://www.httpbin.org/gzip");
             await client.Invoke(env);
 
             await PrintResponse(env);
@@ -124,7 +143,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
             var client = new OwinHttpClient();
 
-            var env = Request.FromRaw(rawRequest);
+            var env = RequestBuilder.FromRaw(rawRequest);
 
             await client.Invoke(env);
 
@@ -134,7 +153,7 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
         private static async Task MakeRequest(int statusCode)
         {
             var client = new OwinHttpClient();
-            var env = Request.Get("http://httpbin.org/status/" + statusCode);
+            var env = RequestBuilder.Get("http://httpbin.org/status/" + statusCode);
             await client.Invoke(env);
 
             await PrintResponse(env);
@@ -153,11 +172,22 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
 
             string url = "http://httpbin.org/redirect/" + n;
 
-            var env = Request.Get(url);
+            var env = RequestBuilder.Get(url);
 
             await client.Invoke(env);
 
             await PrintResponse(env);
+        }
+    }
+
+    public class MyModule : NancyModule
+    {
+        public MyModule()
+        {
+            Get["/hello"] = _ =>
+            {
+                return "Hello From Nancy";
+            };
         }
     }
 }

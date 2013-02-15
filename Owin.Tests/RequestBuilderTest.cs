@@ -1,15 +1,14 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Owin.Client;
 using System.Collections.Concurrent;
 using System.IO;
 
 namespace Owin.Tests
 {
-    [TestClass]
     public class RequestBuilderTest
     {
-        [TestMethod]
+        [Fact]
         public void BuildRequestFromUriTest()
         {
             var requestHeaders = new ConcurrentDictionary<string, string[]>();
@@ -27,25 +26,23 @@ namespace Owin.Tests
 
             var actual = RequestBuilder.Get("http://localhost/");
 
-            Assert.AreEqual(expected["owin.RequestProtocol"],
+            Assert.Equal(expected["owin.RequestProtocol"],
                 actual["owin.RequestProtocol"]);
 
-            Assert.AreEqual(expected["owin.RequestQueryString"],
+            Assert.Equal(expected["owin.RequestQueryString"],
                 actual["owin.RequestQueryString"]);
 
-            Assert.AreEqual(expected["owin.RequestScheme"],
+            Assert.Equal(expected["owin.RequestScheme"],
                 actual["owin.RequestScheme"]);
 
-            Assert.AreEqual(expected["owin.RequestPath"],
+            Assert.Equal(expected["owin.RequestPath"],
                 actual["owin.RequestPath"]);
 
-            Assert.AreEqual(expected["owin.RequestPathBase"],
+            Assert.Equal(expected["owin.RequestPathBase"],
                 actual["owin.RequestPathBase"]);
 
-            Assert.AreEqual(expected["owin.RequestMethod"],
+            Assert.Equal(expected["owin.RequestMethod"],
                 actual["owin.RequestMethod"]);
-
-
         }
     }
 }

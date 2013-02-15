@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client.Demo", "Owin.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client", "Owin.Client\Owin.Client.csproj", "{0E4A9E96-AE2F-4115-A7D5-5162BB849620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Tests", "Owin.Tests\Owin.Tests.csproj", "{B55108DE-CEDD-4859-A9D7-A6438C557C4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Tests", "Owin.Tests\Owin.Tests.csproj", "{F9180916-C8CF-4F6A-BFED-C70862DB3C83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +28,10 @@ Global
 		{0E4A9E96-AE2F-4115-A7D5-5162BB849620}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E4A9E96-AE2F-4115-A7D5-5162BB849620}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E4A9E96-AE2F-4115-A7D5-5162BB849620}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B55108DE-CEDD-4859-A9D7-A6438C557C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B55108DE-CEDD-4859-A9D7-A6438C557C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B55108DE-CEDD-4859-A9D7-A6438C557C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B55108DE-CEDD-4859-A9D7-A6438C557C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9180916-C8CF-4F6A-BFED-C70862DB3C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9180916-C8CF-4F6A-BFED-C70862DB3C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9180916-C8CF-4F6A-BFED-C70862DB3C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9180916-C8CF-4F6A-BFED-C70862DB3C83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

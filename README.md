@@ -8,7 +8,7 @@ that gets mutated with the response when the call to invoke is completed.
 The client takes advantage of Owin middleware to build up functionality. This of course is completely optional but the list of default
 middleware supports making http requests via sockets, ssl support, gzipped responses, handling automatic redirects and more...
 
-See the list of middlware [here](https://github.com/davidfowl/OwinHttpClient/tree/master/OwinHttpClient/Middleware)
+See the list of middlware [here](https://github.com/davidfowl/OwinHttpClient/tree/master/Owin.Client/Middleware)
 
 **NOTE: The api is still in flux and it will be until it feels right.**
 

@@ -49,7 +49,7 @@ namespace Owin.Client.Middleware
             }
 
             // Flush buffered content to the stream async
-            await requestWriter.FlushAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await requestWriter.FlushAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             if (request.Body != null)
             {

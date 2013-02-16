@@ -109,7 +109,7 @@ namespace OwinDemo
             }
 
             env = RequestBuilder.Get("http://www.httpbin.org/basic-auth/john/doe")
-                         .WithBasicAuthCredentials("john", "doe");
+                                .WithCredentials("john", "doe");
 
             await client.Invoke(env);
 

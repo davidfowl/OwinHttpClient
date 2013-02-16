@@ -8,7 +8,7 @@ namespace Owin.Client
 {
     public static class DictionaryExtensions
     {
-        public static IDictionary<string, object> WithBasicAuthCredentials(this IDictionary<string, object> env, string user, string password)
+        public static IDictionary<string, object> WithCredentials(this IDictionary<string, object> env, string user, string password)
         {
             string value = Convert.ToBase64String(Encoding.ASCII.GetBytes(user + ":" + password));
             return env.WithHeader("Authorization", "Basic " + value);
@@ -61,9 +61,9 @@ namespace Owin.Client
 
         private static Stream GetRequestBody(IDictionary<string, string> postData)
         {
-            var ms = new MemoryStream();
             if (postData != null)
             {
+                var ms = new MemoryStream();
                 bool first = true;
                 var writer = new StreamWriter(ms);
                 writer.AutoFlush = true;
@@ -81,8 +81,10 @@ namespace Owin.Client
                 }
 
                 ms.Seek(0, SeekOrigin.Begin);
+                return ms;
             }
-            return ms;
+
+            return Stream.Null;
         }
     }
 }

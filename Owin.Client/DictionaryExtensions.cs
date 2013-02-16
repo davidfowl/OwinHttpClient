@@ -36,12 +36,12 @@ namespace Owin.Client
             return request.Dictionary;
         }
 
-        public static IDictionary<string, object> WithFormUrlEncodedContent(this IDictionary<string, object> env, object postData)
+        public static IDictionary<string, object> WithForm(this IDictionary<string, object> env, object postData)
         {
-            return env.WithFormUrlEncodedContent(GetDictionary(postData));
+            return env.WithForm(GetDictionary(postData));
         }
 
-        public static IDictionary<string, object> WithFormUrlEncodedContent(this IDictionary<string, object> env, IDictionary<string, string> postData)
+        public static IDictionary<string, object> WithForm(this IDictionary<string, object> env, IDictionary<string, string> postData)
         {
             return env.WithContentType("application/x-www-form-urlencoded; charset=UTF-8")
                       .WithBody(GetRequestBody(postData));

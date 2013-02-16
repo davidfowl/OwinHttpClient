@@ -6,6 +6,7 @@ using Owin.Client;
 using Owin.Types;
 using Owin;
 using Nancy;
+using System.Web.Http;
 
 namespace OwinDemo
 {
@@ -15,6 +16,10 @@ namespace OwinDemo
         {
             Console.WriteLine("Make SignalR request in memory");
             MakeSignalRRequest().Wait();
+            Console.ReadKey();
+
+            Console.WriteLine("Make Web API request in memory");
+            MakeWebApiRequest().Wait();
             Console.ReadKey();
 
             Console.WriteLine("Make Nancy request in memory");
@@ -47,6 +52,20 @@ namespace OwinDemo
 
             Console.WriteLine("Make chunked request");
             MakeChunkedRequest().Wait();
+        }
+
+        private static async Task MakeWebApiRequest() 
+        {
+            var client = new OwinHttpClient(app => 
+            {
+                var config = new HttpConfiguration();
+                config.Routes.MapHttpRoute("DefaultRoute", "{controller}");
+                app.UseHttpServer(config);
+            });
+
+            var webApiEnv = RequestBuilder.Get("http://foo/cars");
+            await client.Invoke(webApiEnv);
+            await PrintResponse(webApiEnv);
         }
 
         private static async Task MakeNancyRequest()
@@ -187,6 +206,19 @@ Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
             Get["/hello"] = _ =>
             {
                 return "Hello From Nancy";
+            };
+        }
+    }
+
+    public class CarsController : ApiController 
+    {
+        public string[] GetCars() 
+        {
+            return new[] 
+            { 
+                "Car 1",
+                "Car 2",
+                "Car 3"
             };
         }
     }

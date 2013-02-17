@@ -1,8 +1,7 @@
-﻿using System;
-using Xunit;
-using Owin.Client;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.IO;
+using Owin.Client;
+using Xunit;
 
 namespace Owin.Tests
 {

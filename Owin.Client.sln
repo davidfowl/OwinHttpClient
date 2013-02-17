@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client.Demo", "Owin.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client", "Owin.Client\Owin.Client.csproj", "{0E4A9E96-AE2F-4115-A7D5-5162BB849620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Tests", "Owin.Tests\Owin.Tests.csproj", "{F9180916-C8CF-4F6A-BFED-C70862DB3C83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Client.Tests", "Owin.Client.Tests\Owin.Client.Tests.csproj", "{F9180916-C8CF-4F6A-BFED-C70862DB3C83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

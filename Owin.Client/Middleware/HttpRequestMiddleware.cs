@@ -31,7 +31,7 @@ namespace Owin.Client.Middleware
             var requestWriter = new StreamWriter(stream);
 
             // Request line
-            requestWriter.WriteLine("{0} {1} {2}", request.Method, uri.LocalPath, request.Protocol);
+            requestWriter.WriteLine("{0} {1} {2}", request.Method, uri.PathAndQuery, request.Protocol);
 
             // Write headers
             foreach (var header in request.Headers)

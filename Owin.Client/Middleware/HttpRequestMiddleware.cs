@@ -12,12 +12,10 @@ namespace Owin.Client.Middleware
 
     public class HttpRequestMiddleware
     {
-        private readonly AppFunc _next;
         private readonly IStreamFactory _streamFactory;
 
         public HttpRequestMiddleware(AppFunc next, IStreamFactory streamFactory)
         {
-            _next = next;
             _streamFactory = streamFactory;
         }
 

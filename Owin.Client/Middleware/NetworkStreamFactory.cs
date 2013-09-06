@@ -31,7 +31,6 @@ namespace Owin.Client.Middleware
 
             foreach (IPAddress address in hostEntry.AddressList)
             {
-                var ipe = new IPEndPoint(address, uri.Port);
                 socket = await Connect(address, uri.Port);
 
                 if (socket.Connected)
@@ -78,7 +77,7 @@ namespace Owin.Client.Middleware
                 }
             };
 
-            bool completedSynchronously = socket.ConnectAsync(sea);
+            socket.ConnectAsync(sea);
 
             return tcs.Task;
         }

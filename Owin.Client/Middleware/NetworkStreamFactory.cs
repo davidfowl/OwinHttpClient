@@ -11,7 +11,7 @@ namespace Owin.Client.Middleware
 {
     public class NetworkStreamFactory : IStreamFactory
     {
-        private static readonly SslProtocols _sslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+        private static readonly SslProtocols _sslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls;
 
         public async Task<Stream> CreateStream(Uri uri)
         {

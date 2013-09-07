@@ -37,7 +37,7 @@ namespace Owin.Client.Http
 
                 if (length == 0)
                 {
-                    return await Task.FromResult<int>(0);
+                    return 0;
                 }
 
                 _chunkLength = length;

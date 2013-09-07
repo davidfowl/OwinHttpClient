@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Owin.Client.Http;
+using Owin.Client.Infrastructure;
 using Owin.Types;
 
 namespace Owin.Client.Middleware
@@ -11,12 +12,10 @@ namespace Owin.Client.Middleware
 
     public class HttpRequestMiddleware
     {
-        private readonly AppFunc _next;
         private readonly IStreamFactory _streamFactory;
 
         public HttpRequestMiddleware(AppFunc next, IStreamFactory streamFactory)
         {
-            _next = next;
             _streamFactory = streamFactory;
         }
 
@@ -31,21 +30,21 @@ namespace Owin.Client.Middleware
             var requestWriter = new StreamWriter(stream);
 
             // Request line
-            requestWriter.WriteLine("{0} {1} {2}", request.Method, uri.PathAndQuery, request.Protocol);
+            requestWriter.WriteHttpLine("{0} {1} {2}", request.Method, uri.PathAndQuery, request.Protocol);
 
             // Write headers
             foreach (var header in request.Headers)
             {
-                requestWriter.WriteLine("{0}: {1}", header.Key, request.GetHeader(header.Key));
+                requestWriter.WriteHttpLine("{0}: {1}", header.Key, request.GetHeader(header.Key));
             }
 
             // End headers
-            requestWriter.WriteLine();
+            requestWriter.WriteHttpLine();
 
             if (request.Body == null)
             {
                 // End request
-                requestWriter.WriteLine();
+                requestWriter.WriteHttpLine();
             }
 
             // Flush buffered content to the stream async

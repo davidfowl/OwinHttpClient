@@ -30,7 +30,7 @@ namespace Owin.Client.Middleware
 
                 if (response.StatusCode == 302 || response.StatusCode == 301)
                 {
-                    string url = response.GetHeader("Location");
+                    string url = BuildRedirectUrl(response);
 
                     // Clear the env so we can make a new request
                     environment.Clear();
@@ -45,6 +45,24 @@ namespace Owin.Client.Middleware
 
                 maxRedirects--;
             }
+        }
+
+        private string BuildRedirectUrl(OwinResponse response)
+        {
+            string location = response.GetHeader("Location");
+
+            Uri uri;
+            if (Uri.TryCreate(location, UriKind.Relative, out uri))
+            {
+                // If location is relative, we need to build a full url
+                var previousRequest = new OwinRequest(response.Dictionary);
+                var uriBuilder = new UriBuilder(previousRequest.Uri);
+                uriBuilder.Path = location;
+
+                return uriBuilder.ToString();
+            }
+
+            return location;
         }
     }
 }

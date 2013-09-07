@@ -11,7 +11,7 @@ namespace Owin.Client.Middleware
 {
     public class NetworkStreamFactory : IStreamFactory
     {
-        private static readonly SslProtocols _sslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+        private static readonly SslProtocols _sslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls;
 
         public async Task<Stream> CreateStream(Uri uri)
         {
@@ -31,7 +31,6 @@ namespace Owin.Client.Middleware
 
             foreach (IPAddress address in hostEntry.AddressList)
             {
-                var ipe = new IPEndPoint(address, uri.Port);
                 socket = await Connect(address, uri.Port);
 
                 if (socket.Connected)
@@ -78,7 +77,7 @@ namespace Owin.Client.Middleware
                 }
             };
 
-            bool completedSynchronously = socket.ConnectAsync(sea);
+            socket.ConnectAsync(sea);
 
             return tcs.Task;
         }

@@ -108,7 +108,7 @@ namespace OwinDemo
         private static async Task MakeHttpsRequest()
         {
             var client = new OwinHttpClient();
-            var env = RequestBuilder.Get("https://www.google.com/");
+            var env = RequestBuilder.Get("https://httpbin.org/get");
             await client.Invoke(env);
 
             await PrintResponse(env);
@@ -117,7 +117,7 @@ namespace OwinDemo
         private static async Task MakeBasicAuthRequest()
         {
             var client = new OwinHttpClient();
-            var env = RequestBuilder.Get("http://www.httpbin.org/basic-auth/john/doe");
+            var env = RequestBuilder.Get("http://httpbin.org/basic-auth/john/doe");
 
             await client.Invoke(env);
 
@@ -127,7 +127,7 @@ namespace OwinDemo
                 return;
             }
 
-            env = RequestBuilder.Get("http://www.httpbin.org/basic-auth/john/doe")
+            env = RequestBuilder.Get("http://httpbin.org/basic-auth/john/doe")
                                 .WithCredentials("john", "doe");
 
             await client.Invoke(env);
@@ -139,7 +139,7 @@ namespace OwinDemo
         {
             var client = new OwinHttpClient();
 
-            var env = RequestBuilder.Get("http://www.httpbin.org/gzip");
+            var env = RequestBuilder.Get("http://httpbin.org/gzip");
             await client.Invoke(env);
 
             await PrintResponse(env);
@@ -148,8 +148,8 @@ namespace OwinDemo
         private static async Task MakeRawRequest()
         {
             string rawRequest =
-@"GET http://www.reddit.com/ HTTP/1.1
-Host: www.reddit.com
+@"GET http://httpbin.org/get HTTP/1.1
+Host: httpbin.org
 Connection: keep-alive
 Cache-Control: max-age=0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
